@@ -7,13 +7,17 @@
     npm install redux react-redux
     npm install @reduxjs/toolkit
     npx json-server --watch data/db.json --port 8000 //Create a fake rest API. check note bellow.  
-    npm install react-router-dom@6 //to create links. This needed update
+    npm i react-router-dom //to create links. This needed update
     npm install recharts //To implement charts
     npm install react-bootstrap bootstrap
     npm install react-bootstrap-icons --save
     npm i react-youtube
     npm install react-native-webview
     npm install react-native-youtube-iframe
+
+# create a folder in root directory .env and copy this code
+GENERATE_SOURCEMAP=false
+* this prevent a warning message in the console
 
 ## Leyend:
 

@@ -162,6 +162,7 @@ class PaintingReservedSchema(ma.Schema):
 painting_schema = PaintingSchema()
 paintings_schema = PaintingSchema(many=True)
 customer_schema = CustomerSchema()
+customers_schema = CustomerSchema(many=True)
 fan_schema = FanSchema()
 paintingReserved_schema = PaintingReservedSchema()
 paintingsReserved_schema = PaintingReservedSchema(many=True)
@@ -185,6 +186,13 @@ def single_painting(id):
     painting = PaintingData.query.get(id)
     results = painting_schema.jsonify(painting)
     return results
+
+
+@app.route('/all_customers', methods=['GET'])
+def all_customers():
+    all_customers = Customer.query.all()
+    results = customers_schema.dump(all_customers)
+    return jsonify(results)
 
 
 @app.route('/painting-reserved', methods=['GET'])
@@ -236,9 +244,24 @@ def add_customer():
 
     write_pdf.excel(engine)
 
-    new_customer = f'name: {name}\n last name: {last_name}\n email: {email}\n telephone: {telephone}\n country: {country}\n feedback: {feedback}\n register number: {registerNum}'
+    result = db.session.query(PaintingData).filter(
+        PaintingData.registerNum == registerNum)
+
+    # retrieve info from the database to pass it into the emails
+    titles = []
+    price = []
+    for row in result:
+        # print('title single', row.title)
+        titles.append(row.title)
+        price.append(row.price)
+
+    print('titles', titles)
+
+    new_customer = f'name: {name}\n last name: {last_name}\n email: {email}\n telephone: {telephone}\n country: {country}\n feedback: {feedback}\n register number: {registerNum}\n titles: {titles}'
+    data = f'title(s): {titles}\nprice: {price}'
 
     send_email_component.email_attachment(new_customer)
+    send_email_component.email_customer(email, data)
 
     return customer_schema.jsonify(customer)
 
