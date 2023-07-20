@@ -1,7 +1,7 @@
 import { Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
-import { addPainting, addReservedPaintAsync, paintReservedAsync, switchFalse } from "../redux/gallerySlice";
+import { addPainting, addReservedPaintAsync, paintReservedPatchAsync, switchFalse } from "../redux/gallerySlice";
 import AlertAdded from "./AlertAdded";
 
 
@@ -9,6 +9,7 @@ const Painting = () => {
 
     const alreadyAdded = useSelector(state => state.data.alreadyAdded);
     const registerNumber = useSelector(state => state.data.registerNum);
+    console.log("registed number", registerNumber)
     const paintingsData = useSelector(state => state.data.paintingsData);
 
     const dispatch = useDispatch();
@@ -16,6 +17,8 @@ const Painting = () => {
 
 
     const addPaintingCart = (piece) => {
+        console.log("piece", piece)
+
         const paintingDetails = {
             id: piece.id,
             title: piece.title,
@@ -23,11 +26,12 @@ const Painting = () => {
             size: piece.size,
             price: piece.price,
             img: piece.img,
-            reserved: piece.resersed,
+            reserved: !piece.reserved,
+            cart: !piece.cart,
             registerNum: registerNumber,
         }
-        dispatch(addPainting(paintingDetails));
-        dispatch(paintReservedAsync(paintingDetails));
+        //dispatch(addPainting(paintingDetails));
+        dispatch(paintReservedPatchAsync(paintingDetails));
         dispatch(addReservedPaintAsync(paintingDetails))
     }
     const backFalse = () => {
@@ -46,6 +50,8 @@ const Painting = () => {
                     .map(painting => {
                         const imagen = painting.img;
                         const resersed = painting.reserved;
+                        console.log("reserved", painting.reserved)
+                        console.log("cart", painting.cart)
                         return (
                             <div key={painting.id} className='container-md my-5'>
                                 <div className="row justify-content-center align-items-end">

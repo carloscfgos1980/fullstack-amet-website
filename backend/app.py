@@ -169,8 +169,8 @@ paintingReserved_schema = PaintingReservedSchema()
 paintingsReserved_schema = PaintingReservedSchema(many=True)
 
 # create the tables in the database. Once they are created is not nolger needed so I can commented this piece of code
-# with app.app_context():
-#     db.create_all()
+with app.app_context():
+    db.create_all()
 
 
 @app.route('/painting', methods=['GET'])

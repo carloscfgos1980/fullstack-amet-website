@@ -17,7 +17,7 @@ const ShowShoppingCart = () => {
     const dispatch = useDispatch();
 
     const removing = (item) => {
-        dispatch(paintNotReservedAsync(item))
+        // dispatch(paintNotReservedAsync(item))
         dispatch(switchFalse());
         dispatch(deleteReservedAsync(item))
 

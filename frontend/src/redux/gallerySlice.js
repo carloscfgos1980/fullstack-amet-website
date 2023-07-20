@@ -11,7 +11,7 @@ export const getDataAsync = createAsyncThunk(
     }
 );
 
-export const paintReservedAsync = createAsyncThunk(
+export const paintReservedPatchAsync = createAsyncThunk(
     'gallery/paintReservedAsync',
     async (payload) => {
         const resp = await fetch(`http://127.0.0.1:5000/update/${payload.id}`, {
@@ -19,7 +19,7 @@ export const paintReservedAsync = createAsyncThunk(
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ reserved: true, registerNum: payload.registerNum }),
+            body: JSON.stringify({ cart: payload.cart, reserved: payload.reserved, registerNum: payload.registerNum }),
         });
 
         if (resp.ok) {
@@ -29,23 +29,23 @@ export const paintReservedAsync = createAsyncThunk(
     }
 );
 
-export const paintNotReservedAsync = createAsyncThunk(
-    'gallery/paintNotReservedAsync',
-    async (payload) => {
-        const resp = await fetch(`http://127.0.0.1:5000/update/${payload.id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ reserved: false, registerNum: null }),
-        });
+// export const paintNotReservedAsync = createAsyncThunk(
+//     'gallery/paintNotReservedAsync',
+//     async (payload) => {
+//         const resp = await fetch(`http://127.0.0.1:5000/update/${payload.id}`, {
+//             method: 'PATCH',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({ reserved: false, registerNum: null }),
+//         });
 
-        if (resp.ok) {
-            const reservedPainting = await resp.json();
-            return { reservedPainting };
-        }
-    }
-);
+//         if (resp.ok) {
+//             const reservedPainting = await resp.json();
+//             return { reservedPainting };
+//         }
+//     }
+// );
 export const addReservedPaintAsync = createAsyncThunk(
     'gallery/addReservedPaintAsync',
     async (payload) => {
@@ -127,11 +127,11 @@ const gallerySlice = createSlice({
         reservedPaintings: [],
     },
     reducers: {
-        addPainting: (state, action) => {
-            const painting = action.payload
-            state.addedPainting.push(painting);
-            state.alreadyAdded = true;
-        },
+        // addPainting: (state, action) => {
+        //     const painting = action.payload
+        //     state.addedPainting.push(painting);
+        //     state.alreadyAdded = true;
+        // },
         addClientData: (state, action) => {
             state.clientAllData = action.payload;
         },
@@ -161,8 +161,11 @@ const gallerySlice = createSlice({
         },
         [getDataAsync.fulfilled]: (state, action) => {
             console.log('Data fetched successfully!')
+            console.log("get data action payload", action.payload)
             const allPaintings = action.payload.data
             let available = allPaintings.filter(paint => paint.sold === false)
+            state.addedPainting = allPaintings.filter(paint => paint.cart === true)
+
 
             state.paintingsData = available;
             let solded = allPaintings.filter(paint => paint.sold === true)
@@ -170,7 +173,8 @@ const gallerySlice = createSlice({
             state.isLoading = false;
             return action.payloads;
         },
-        [paintReservedAsync.fulfilled]: (state, action) => {
+        [paintReservedPatchAsync.fulfilled]: (state, action) => {
+            console.log("patch reserved and cart", action.payload.reservedPainting)
             let updatedDataPaintings = state.paintingsData.map(painting => {
                 if (painting.id === action.payload.reservedPainting.id) {
                     painting.reserved = !painting.reserved;
@@ -179,18 +183,19 @@ const gallerySlice = createSlice({
             });
             state.paintingsData = updatedDataPaintings;
         },
-        [paintNotReservedAsync.fulfilled]: (state, action) => {
-            let updatedDataPaintings = state.paintingsData.map(painting => {
-                if (painting.id === action.payload.reservedPainting.id) {
-                    painting.reserved = !painting.reserved;
-                }
-                return painting;
-            });
-            state.paintingsData = updatedDataPaintings;
+        // [paintNotReservedAsync.fulfilled]: (state, action) => {
+        //     let updatedDataPaintings = state.paintingsData.map(painting => {
+        //         if (painting.id === action.payload.reservedPainting.id) {
+        //             painting.reserved = !painting.reserved;
+        //         }
+        //         return painting;
+        //     });
+        //     state.paintingsData = updatedDataPaintings;
 
-        },
+        // },
         [addReservedPaintAsync.fulfilled]: (state, action) => {
-            state.reservedPaintings = action.payload;
+            state.addedPainting.push(action.payload.reservedPainting);
+            //state.reservedPaintings = action.payload;
         },
         [deleteReservedAsync.fulfilled]: (state, action) => {
             state.addedPainting = state.addedPainting.filter(paint => paint.id !== action.payload.id);
