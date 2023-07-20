@@ -12,8 +12,8 @@ import ShowShoppingCart from './ShowShoppingCart';
 import CheckData from './CheckData';
 import Success from './Success';
 import ContactsClients from './ContactsClients';
-import PaintingsCarousel from './PaintingsCarousel';
 import { AnimatePresence } from 'framer-motion'
+import Shop from '../Shop';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -24,7 +24,7 @@ const AnimatedRoutes = () => {
         <Route path="/about" element={<About />} />
         <Route path="/works" element={<Works />} />
         <Route path="/gallery" element={<Gallery />} />
-        <Route path="/shop" element={<PaintingsCarousel />} />
+        <Route path="/shop" element={<Shop />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/paintings" element={<PaintingsList />} />
         <Route path="/performance" element={<ArtPerformance />} />

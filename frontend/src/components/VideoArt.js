@@ -61,13 +61,6 @@ const VideoArt = () => {
                     </h2>
                 </div>
             </div>
-
-
-
-
-
-
-
         </motion.div>
     );
 }

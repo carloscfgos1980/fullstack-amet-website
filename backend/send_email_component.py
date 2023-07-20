@@ -18,7 +18,7 @@ def email_attachment(content):
     em.set_content(body)
 
     # Define the file to attach
-    filename = 'Amet_data.xlsx'
+    filename = 'Amet_data_update.xlsx'
 
     # coding to send attachment
     with open('Amet_data.xlsx', 'rb') as fp:  # r is for read and b for binary

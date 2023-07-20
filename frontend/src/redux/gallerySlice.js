@@ -162,10 +162,10 @@ const gallerySlice = createSlice({
         [getDataAsync.fulfilled]: (state, action) => {
             console.log('Data fetched successfully!')
             const allPaintings = action.payload.data
-            let available = allPaintings.filter(paint => paint.sold === false && paint.showDOM === true)
+            let available = allPaintings.filter(paint => paint.sold === false)
 
             state.paintingsData = available;
-            let solded = allPaintings.filter(paint => paint.sold === true && paint.showDOM === true)
+            let solded = allPaintings.filter(paint => paint.sold === true)
             state.artSold = solded;
             state.isLoading = false;
             return action.payloads;

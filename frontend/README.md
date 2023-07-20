@@ -14,10 +14,7 @@
     npm i react-youtube
     npm install react-native-webview
     npm install react-native-youtube-iframe
-
-# create a folder in root directory .env and copy this code
-GENERATE_SOURCEMAP=false
-* this prevent a warning message in the console
+    npm install --save-dev @babel/plugin-proposal-private-property-in-object //Fix a problem with this component
 
 ## Leyend:
 
@@ -63,3 +60,19 @@ ShowShoppingCart => ContactsClients.js (inputfield) => CheckData.js (it contains
 - Looping thru the array of painting to select only the paint we clicked to be shown in the DOM
   N: When I" used useParams. I couldn't import the image from public file so I had to use the follwing method and make a copy of the image folder into src folder, the method that I used was this one:
   <img src={require(`${imagen}`)}
+
+
+
+  # Bootstrap NavBar does not work while deploy in microsoft azure. I need Change the Nav artquitecture
+
+  ## Tutoriales para deploy website
+
+# Create DNS in Azure
+
+https://learn.microsoft.com/en-us/azure/static-web-apps/custom-domain-azure-dns
+
+# Create DNS Zone for Azure
+https://learn.microsoft.com/en-us/azure/static-web-apps/azure-dns-zone
+
+# Set up a custom domain in Azure Static Web Apps
+https://learn.microsoft.com/en-us/azure/static-web-apps/custom-domain-external

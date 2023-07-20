@@ -40,10 +40,10 @@ class PaintingData(db.Model):
     sold = db.Column("sold", db.BOOLEAN)
     reserved = db.Column("reserved", db.BOOLEAN)
     reservedDate = db.Column("reservedDate", db.String)
-    showDOM = db.Column("showDOM", db.BOOLEAN)
+    cart = db.Column("cart", db.BOOLEAN)
     registerNum = db.Column("registerNum", db.Integer)
 
-    def __init__(self, title, tech, size, price, img, created, soldDate, sold, reserved, reservedDate, showDOM, registerNum):
+    def __init__(self, title, tech, size, price, img, created, soldDate, sold, reserved, reservedDate, cart, registerNum):
         self.title = title
         self.tech = tech
         self.size = size
@@ -54,11 +54,11 @@ class PaintingData(db.Model):
         self.sold = sold
         self.reserved = reserved
         self.reservedDate = reservedDate
-        self.showDOM = showDOM
+        self.cart = cart
         self.registerNum = registerNum
 
     def __repr__(self):
-        return f"({self.id}) {self.title} {self.tech} {self.size} ({self.price}) {self.img} ({self.created}) {self.soldDate} {self.sold}) {self.reserved} {self.reservedDate} {self.showDOM} ({self.registerNum})"
+        return f"({self.id}) {self.title} {self.tech} {self.size} ({self.price}) {self.img} ({self.created}) {self.soldDate} {self.sold}) {self.reserved} {self.reservedDate} {self.cart} ({self.registerNum})"
 
 
 class Customer(db.Model):
@@ -120,7 +120,8 @@ class PaintingReserved(db.Model):
     price = db.Column("price", db.Integer)
     img = db.Column("img", db.String)
     reservedDate = db.Column("reservedDate", db.String)
-    registerNum = db.Column("registerNum", db.Integer)
+    registerNum = db.Column(
+        db.Integer, ForeignKey("paintingsReserved.registerNum"))
 
     def __init__(self, title, tech, size, price, img, reservedDate, registerNum):
         self.title = title
@@ -138,7 +139,7 @@ class PaintingReserved(db.Model):
 class PaintingSchema(ma.Schema):
     class Meta:
         fields = ('id', 'title', 'tech', 'size',
-                  'price', 'img', 'created', 'soldDate', 'sold', 'reserved', 'reservedDate', 'showDOM', 'registerNum')
+                  'price', 'img', 'created', 'soldDate', 'sold', 'reserved', 'reservedDate', 'cart', 'registerNum')
 
 
 class CustomerSchema(ma.Schema):
@@ -168,10 +169,8 @@ paintingReserved_schema = PaintingReservedSchema()
 paintingsReserved_schema = PaintingReservedSchema(many=True)
 
 # create the tables in the database. Once they are created is not nolger needed so I can commented this piece of code
-'''
-with app.app_context():
-    db.create_all()
-'''
+# with app.app_context():
+#     db.create_all()
 
 
 @app.route('/painting', methods=['GET'])
@@ -223,6 +222,7 @@ def add_paitingReserved():
                              price, img, reservedDate, registerNum)
     db.session.add(paint)
     db.session.commit()
+    write_pdf.excel(engine)
 
     return paintingReserved_schema.jsonify(paint)
 
@@ -242,10 +242,12 @@ def add_customer():
     db.session.add(customer)
     db.session.commit()
 
-    write_pdf.excel(engine)
-
     result = db.session.query(PaintingData).filter(
         PaintingData.registerNum == registerNum)
+
+    engine.execute("UPDATE paintingsData set cart=False")
+
+    write_pdf.excel(engine)
 
     # retrieve info from the database to pass it into the emails
     titles = []
@@ -282,6 +284,8 @@ def add_fan():
 
     new_fan = f'name: {name}\n last name: {last_name}\n email: {email}\n telephone: {telephone}\n country: {country}\n feedback: {feedback}'
 
+    write_pdf.excel(engine)
+
     send_email_component.email_simple(new_fan)
 
     return fan_schema.jsonify(fan)
@@ -291,21 +295,26 @@ def add_fan():
 def update_painting(id):
     painting = PaintingData.query.get(id)
 
+    cart = request.json['cart']
     reserved = request.json['reserved']
     registerNum = request.json['registerNum']
 
     # check if the reserved is False then make the date null
+
     def hoy():
         if painting.reserved is False:
             return None
         else:
             return my_date
 
+    painting.cart = cart
     painting.reserved = reserved
     painting.registerNum = registerNum
     painting.reservedDate = hoy()
+
     db.session.commit()
     results = painting_schema.jsonify(painting)
+    write_pdf.excel(engine)
 
     return results
 
@@ -316,6 +325,7 @@ def delete_customer(id):
     db.session.delete(painting)
     db.session.commit()
     results = painting_schema.jsonify(painting)
+    write_pdf.excel(engine)
 
     return results
 
@@ -326,6 +336,7 @@ def delete_fan(id):
     db.session.delete(painting)
     db.session.commit()
     results = painting_schema.jsonify(painting)
+    write_pdf.excel(engine)
 
     return results
 
@@ -336,11 +347,10 @@ def delete_paintingReserved(id):
     db.session.delete(painting)
     db.session.commit()
     results = paintingReserved_schema.jsonify(painting)
+    write_pdf.excel(engine)
 
     return results
 
-
-write_pdf.excel(engine)
 
 if __name__ == "__main__":
     app.run(debug=True)
