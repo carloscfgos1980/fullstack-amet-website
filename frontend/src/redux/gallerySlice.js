@@ -199,6 +199,7 @@ const gallerySlice = createSlice({
         },
         [deleteReservedAsync.fulfilled]: (state, action) => {
             state.addedPainting = state.addedPainting.filter(paint => paint.id !== action.payload.id);
+            state.alreadyAdded = false;
         },
         [addCustomerAsync.fulfilled]: (state, action) => {
             state.clientAllData = action.payload;

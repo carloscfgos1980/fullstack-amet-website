@@ -2,7 +2,7 @@ import { Button } from "react-bootstrap";
 import { BsFillTrashFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { deleteReservedAsync, paintNotReservedAsync, switchFalse } from "../redux/gallerySlice";
+import { deleteReservedAsync, paintNotReservedAsync, paintReservedPatchAsync, switchFalse } from "../redux/gallerySlice";
 import { motion } from 'framer-motion';
 
 
@@ -16,10 +16,17 @@ const ShowShoppingCart = () => {
 
     const dispatch = useDispatch();
 
-    const removing = (item) => {
+    const removing = (piece) => {
+        const paintingDetails = {
+            id: piece.id,
+            reserved: false,
+            cart: false,
+            registerNum: null,
+        }
         // dispatch(paintNotReservedAsync(item))
-        dispatch(switchFalse());
-        dispatch(deleteReservedAsync(item))
+        //dispatch(switchFalse());
+        dispatch(paintReservedPatchAsync(paintingDetails))
+        dispatch(deleteReservedAsync(paintingDetails))
 
     }
     return (
