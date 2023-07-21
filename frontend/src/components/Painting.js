@@ -1,7 +1,7 @@
 import { Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
-import { addPainting, addReservedPaintAsync, paintReservedPatchAsync, switchFalse } from "../redux/gallerySlice";
+import { addReservedPaintAsync, paintReservedPatchAsync, switchFalse } from "../redux/gallerySlice";
 import AlertAdded from "./AlertAdded";
 
 

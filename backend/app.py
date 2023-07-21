@@ -164,7 +164,7 @@ painting_schema = PaintingSchema()
 paintings_schema = PaintingSchema(many=True)
 customer_schema = CustomerSchema()
 customers_schema = CustomerSchema(many=True)
-fan_schema = FanSchema()
+fans_schema = FanSchema(many=True)
 paintingReserved_schema = PaintingReservedSchema()
 paintingsReserved_schema = PaintingReservedSchema(many=True)
 
@@ -191,6 +191,13 @@ def single_painting(id):
 def all_customers():
     all_customers = Customer.query.all()
     results = customers_schema.dump(all_customers)
+    return jsonify(results)
+
+
+@app.route('/all_fans', methods=['GET'])
+def all_fans():
+    all_customers = Fan.query.all()
+    results = fans_schema.dump(all_customers)
     return jsonify(results)
 
 

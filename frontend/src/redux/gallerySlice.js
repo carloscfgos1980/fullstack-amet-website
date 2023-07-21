@@ -29,23 +29,6 @@ export const paintReservedPatchAsync = createAsyncThunk(
     }
 );
 
-// export const paintNotReservedAsync = createAsyncThunk(
-//     'gallery/paintNotReservedAsync',
-//     async (payload) => {
-//         const resp = await fetch(`http://127.0.0.1:5000/update/${payload.id}`, {
-//             method: 'PATCH',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify({ reserved: false, registerNum: null }),
-//         });
-
-//         if (resp.ok) {
-//             const reservedPainting = await resp.json();
-//             return { reservedPainting };
-//         }
-//     }
-// );
 export const addReservedPaintAsync = createAsyncThunk(
     'gallery/addReservedPaintAsync',
     async (payload) => {
@@ -127,19 +110,11 @@ const gallerySlice = createSlice({
         reservedPaintings: [],
     },
     reducers: {
-        // addPainting: (state, action) => {
-        //     const painting = action.payload
-        //     state.addedPainting.push(painting);
-        //     state.alreadyAdded = true;
-        // },
         addClientData: (state, action) => {
             state.clientAllData = action.payload;
         },
         switchFalse: (state) => {
             state.alreadyAdded = false;
-        },
-        fansData: (state, action) => {
-            state.fanAllData = action.payload;
         },
         resetAddedPainting: (state) => {
             state.addedPainting = [];
@@ -175,6 +150,7 @@ const gallerySlice = createSlice({
         },
         [paintReservedPatchAsync.fulfilled]: (state, action) => {
             console.log("patch reserved and cart", action.payload.reservedPainting)
+            console.log("patch reserved and cart id", action.payload.reservedPainting.id)
             let updatedDataPaintings = state.paintingsData.map(painting => {
                 if (painting.id === action.payload.reservedPainting.id) {
                     painting.reserved = !painting.reserved;
@@ -183,19 +159,8 @@ const gallerySlice = createSlice({
             });
             state.paintingsData = updatedDataPaintings;
         },
-        // [paintNotReservedAsync.fulfilled]: (state, action) => {
-        //     let updatedDataPaintings = state.paintingsData.map(painting => {
-        //         if (painting.id === action.payload.reservedPainting.id) {
-        //             painting.reserved = !painting.reserved;
-        //         }
-        //         return painting;
-        //     });
-        //     state.paintingsData = updatedDataPaintings;
-
-        // },
         [addReservedPaintAsync.fulfilled]: (state, action) => {
             state.addedPainting.push(action.payload.reservedPainting);
-            //state.reservedPaintings = action.payload;
         },
         [deleteReservedAsync.fulfilled]: (state, action) => {
             state.addedPainting = state.addedPainting.filter(paint => paint.id !== action.payload.id);
@@ -205,12 +170,13 @@ const gallerySlice = createSlice({
             state.clientAllData = action.payload;
         },
         [addFanAsync.fulfilled]: (state, action) => {
-            state.fanAllData = action.payload;
+            console.log("fan added", action.payload.new_fan)
+            state.fanAllData = '';
         },
     }
 });
 
 
-export const { addPainting, removePainting, addClientData, switchFalse, fansData, resetAddedPainting, getRegisterNum } = gallerySlice.actions;
+export const { addClientData, switchFalse, resetAddedPainting, getRegisterNum } = gallerySlice.actions;
 
 export default gallerySlice.reducer;

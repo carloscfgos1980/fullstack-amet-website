@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Form } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-//import { fansData } from "./redux/gallerySlice";
 import { motion } from 'framer-motion';
 import { addFanAsync } from "./redux/gallerySlice";
 
