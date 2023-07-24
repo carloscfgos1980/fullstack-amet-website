@@ -86,12 +86,12 @@ export const addFanAsync = createAsyncThunk(
 export const deleteReservedAsync = createAsyncThunk(
     'gallery/deleteReservedAsync',
     async (payload) => {
-        const resp = await fetch(`http://127.0.0.1:5000/delete-paintingReserved/${payload.id}`, {
+        const resp = await fetch(`http://127.0.0.1:5000/delete-paintingReserved/${payload.paintId}`, {
             method: 'DELETE',
         });
 
         if (resp.ok) {
-            return { id: payload.id };
+            return { paintId: payload.paintId };
         }
     }
 );
@@ -110,6 +110,11 @@ const gallerySlice = createSlice({
         reservedPaintings: [],
     },
     reducers: {
+        deletePainting: (state, action) => {
+            console.log("action payload id", action.payload.id)
+            console.log("action payload paintId", action.payload.paintId)
+            state.addedPainting = state.addedPainting.filter(paint => paint.paintId !== action.payload.paintId);
+        },
         addClientData: (state, action) => {
             state.clientAllData = action.payload;
         },
@@ -138,13 +143,12 @@ const gallerySlice = createSlice({
             console.log('Data fetched successfully!')
             console.log("get data action payload", action.payload)
             const allPaintings = action.payload.data
-            let available = allPaintings.filter(paint => paint.sold === false)
+            state.paintingsData = allPaintings.filter(paint => paint.sold === false)
+
             state.addedPainting = allPaintings.filter(paint => paint.cart === true)
 
+            state.artSold = allPaintings.filter(paint => paint.sold === true)
 
-            state.paintingsData = available;
-            let solded = allPaintings.filter(paint => paint.sold === true)
-            state.artSold = solded;
             state.isLoading = false;
             return action.payloads;
         },
@@ -163,8 +167,10 @@ const gallerySlice = createSlice({
             state.addedPainting.push(action.payload.reservedPainting);
         },
         [deleteReservedAsync.fulfilled]: (state, action) => {
-            state.addedPainting = state.addedPainting.filter(paint => paint.id !== action.payload.id);
+            console.log("delete", action.payload.paintId)
             state.alreadyAdded = false;
+            // let deletedPainting = state.addedPainting.filter(paint => paint.paintId !== action.payload.paintId || paint.id !== action.payload.paintId);
+            // state.addedPainting = deletedPainting
         },
         [addCustomerAsync.fulfilled]: (state, action) => {
             state.clientAllData = action.payload;
@@ -177,6 +183,6 @@ const gallerySlice = createSlice({
 });
 
 
-export const { addClientData, switchFalse, resetAddedPainting, getRegisterNum } = gallerySlice.actions;
+export const { deletePainting, addClientData, switchFalse, resetAddedPainting, getRegisterNum } = gallerySlice.actions;
 
 export default gallerySlice.reducer;

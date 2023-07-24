@@ -113,27 +113,29 @@ class Fan(db.Model):
 class PaintingReserved(db.Model):
     __tablename__ = "paintingsReserved"
 
-    id = db.Column("id", db.Integer, primary_key=True)
+    id = db.Column("id", db.Integer)
     title = db.Column("title", db.String(100))
     tech = db.Column("tech", db.String(100))
     size = db.Column("size", db.String(100))
     price = db.Column("price", db.Integer)
     img = db.Column("img", db.String)
     reservedDate = db.Column("reservedDate", db.String)
+    paintId = db.Column("paintId", db.Integer, primary_key=True)
     registerNum = db.Column(
         db.Integer, ForeignKey("paintingsReserved.registerNum"))
 
-    def __init__(self, title, tech, size, price, img, reservedDate, registerNum):
+    def __init__(self, title, tech, size, price, img, reservedDate, paintId, registerNum):
         self.title = title
         self.tech = tech
         self.size = size
         self.price = price
         self.img = img
         self.reservedDate = reservedDate
+        self.paintId = paintId
         self.registerNum = registerNum
 
     def __repr__(self):
-        return f"({self.id}) {self.title} {self.tech} {self.size} ({self.price}) {self.img}  {self.reservedDate} ({self.registerNum})"
+        return f"({self.id}) {self.title} {self.tech} {self.size} ({self.price}) {self.img}  {self.reservedDate} ({self.paintId}) ({self.registerNum})"
 
 
 class PaintingSchema(ma.Schema):
@@ -157,7 +159,7 @@ class FanSchema(ma.Schema):
 class PaintingReservedSchema(ma.Schema):
     class Meta:
         fields = ('id', 'title', 'tech', 'size', 'price',
-                  'img', 'reservedDate', 'registerNum')
+                  'img', 'reservedDate', 'paintId', 'registerNum')
 
 
 painting_schema = PaintingSchema()
@@ -208,9 +210,9 @@ def get_paintingsReserved():
     return jsonify(results)
 
 
-@app.route('/painting-reserved/<id>', methods=['GET'])
-def single_paintingsReserved(id):
-    painting = PaintingReserved.query.get(id)
+@app.route('/painting-reserved/<paintId>', methods=['GET'])
+def single_paintingsReserved(paintId):
+    painting = PaintingReserved.query.get(paintId)
     results = paintingReserved_schema.jsonify(painting)
     return results
 
@@ -223,10 +225,11 @@ def add_paitingReserved():
     price = request.json['price']
     img = request.json['img']
     reservedDate = my_date
+    paintId = request.json['paintId']
     registerNum = request.json['registerNum']
 
     paint = PaintingReserved(title, tech, size,
-                             price, img, reservedDate, registerNum)
+                             price, img, reservedDate, paintId, registerNum)
     db.session.add(paint)
     db.session.commit()
     write_pdf.excel(engine)
@@ -348,9 +351,9 @@ def delete_fan(id):
     return results
 
 
-@app.route('/delete-paintingReserved/<id>', methods=['DELETE'])
-def delete_paintingReserved(id):
-    painting = PaintingReserved.query.get(id)
+@app.route('/delete-paintingReserved/<paintId>', methods=['DELETE'])
+def delete_paintingReserved(paintId):
+    painting = PaintingReserved.query.get(paintId)
     db.session.delete(painting)
     db.session.commit()
     results = paintingReserved_schema.jsonify(painting)

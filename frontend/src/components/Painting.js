@@ -11,6 +11,8 @@ const Painting = () => {
     const registerNumber = useSelector(state => state.data.registerNum);
     console.log("registed number", registerNumber)
     const paintingsData = useSelector(state => state.data.paintingsData);
+    const paintingAdded = useSelector(state => state.data.paintingAdded);
+    console.log("added paintings in Paintings", paintingAdded)
 
     const dispatch = useDispatch();
     const { title } = useParams();
@@ -28,6 +30,7 @@ const Painting = () => {
             img: piece.img,
             reserved: !piece.reserved,
             cart: !piece.cart,
+            paintId: piece.id,
             registerNum: registerNumber,
         }
         //dispatch(addPainting(paintingDetails));

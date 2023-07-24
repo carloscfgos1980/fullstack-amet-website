@@ -2,13 +2,14 @@ import { Button } from "react-bootstrap";
 import { BsFillTrashFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { deleteReservedAsync, paintReservedPatchAsync } from "../redux/gallerySlice";
+import { deletePainting, deleteReservedAsync, paintReservedPatchAsync } from "../redux/gallerySlice";
 import { motion } from 'framer-motion';
 
 
 const ShowShoppingCart = () => {
     let total = 0;
     const addedPainting = useSelector(state => state.data.addedPainting);
+    console.log("added paintging in show shopping cart", addedPainting)
 
     addedPainting.forEach(item => {
         total += item.price;
@@ -17,14 +18,23 @@ const ShowShoppingCart = () => {
     const dispatch = useDispatch();
 
     const removing = (piece) => {
+        const IdPaint = () => {
+            if (!piece.paintId) {
+                return 2
+            } else {
+                return piece.paintId
+            }
+        }
         const paintingDetails = {
-            id: piece.id,
+            id: IdPaint(),
+            paintId: IdPaint(),
             reserved: false,
             cart: false,
             registerNum: null,
         }
         dispatch(paintReservedPatchAsync(paintingDetails))
         dispatch(deleteReservedAsync(paintingDetails))
+        dispatch(deletePainting(paintingDetails))
 
     }
     return (
@@ -43,6 +53,7 @@ const ShowShoppingCart = () => {
             <h1 className="display-5 fw-bold" >Shopping Cart</h1>
             {addedPainting.map(painting => {
                 const imagen = painting.img
+                console.log("paintId", painting.paintId)
                 return (
                     <div key={painting.id} className='container my-5'>
                         <div className="row justify-content-center align-items-end">
