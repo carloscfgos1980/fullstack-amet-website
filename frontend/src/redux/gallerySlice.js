@@ -111,9 +111,7 @@ const gallerySlice = createSlice({
     },
     reducers: {
         deletePainting: (state, action) => {
-            console.log("action payload id", action.payload.id)
-            console.log("action payload paintId", action.payload.paintId)
-            state.addedPainting = state.addedPainting.filter(paint => paint.paintId !== action.payload.paintId);
+            state.addedPainting = state.addedPainting.filter(paint => paint.title !== action.payload.title);
         },
         addClientData: (state, action) => {
             state.clientAllData = action.payload;
@@ -141,7 +139,6 @@ const gallerySlice = createSlice({
         },
         [getDataAsync.fulfilled]: (state, action) => {
             console.log('Data fetched successfully!')
-            console.log("get data action payload", action.payload)
             const allPaintings = action.payload.data
             state.paintingsData = allPaintings.filter(paint => paint.sold === false)
 
@@ -153,8 +150,6 @@ const gallerySlice = createSlice({
             return action.payloads;
         },
         [paintReservedPatchAsync.fulfilled]: (state, action) => {
-            console.log("patch reserved and cart", action.payload.reservedPainting)
-            console.log("patch reserved and cart id", action.payload.reservedPainting.id)
             let updatedDataPaintings = state.paintingsData.map(painting => {
                 if (painting.id === action.payload.reservedPainting.id) {
                     painting.reserved = !painting.reserved;
@@ -167,16 +162,12 @@ const gallerySlice = createSlice({
             state.addedPainting.push(action.payload.reservedPainting);
         },
         [deleteReservedAsync.fulfilled]: (state, action) => {
-            console.log("delete", action.payload.paintId)
             state.alreadyAdded = false;
-            // let deletedPainting = state.addedPainting.filter(paint => paint.paintId !== action.payload.paintId || paint.id !== action.payload.paintId);
-            // state.addedPainting = deletedPainting
         },
         [addCustomerAsync.fulfilled]: (state, action) => {
             state.clientAllData = action.payload;
         },
         [addFanAsync.fulfilled]: (state, action) => {
-            console.log("fan added", action.payload.new_fan)
             state.fanAllData = '';
         },
     }

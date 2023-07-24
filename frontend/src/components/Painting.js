@@ -9,17 +9,13 @@ const Painting = () => {
 
     const alreadyAdded = useSelector(state => state.data.alreadyAdded);
     const registerNumber = useSelector(state => state.data.registerNum);
-    console.log("registed number", registerNumber)
     const paintingsData = useSelector(state => state.data.paintingsData);
-    const paintingAdded = useSelector(state => state.data.paintingAdded);
-    console.log("added paintings in Paintings", paintingAdded)
 
     const dispatch = useDispatch();
     const { title } = useParams();
 
 
     const addPaintingCart = (piece) => {
-        console.log("piece", piece)
 
         const paintingDetails = {
             id: piece.id,
@@ -33,7 +29,6 @@ const Painting = () => {
             paintId: piece.id,
             registerNum: registerNumber,
         }
-        //dispatch(addPainting(paintingDetails));
         dispatch(paintReservedPatchAsync(paintingDetails));
         dispatch(addReservedPaintAsync(paintingDetails))
     }
@@ -52,9 +47,7 @@ const Painting = () => {
                 {paintingsData.filter(painting => painting.title === title)
                     .map(painting => {
                         const imagen = painting.img;
-                        const resersed = painting.reserved;
-                        console.log("reserved", painting.reserved)
-                        console.log("cart", painting.cart)
+                        const reserved = painting.reserved;
                         return (
                             <div key={painting.id} className='container-md my-5'>
                                 <div className="row justify-content-center align-items-end">
@@ -70,7 +63,7 @@ const Painting = () => {
                                         <p>Price: {painting.price}</p>
                                     </div>
                                 </div>
-                                {resersed ?
+                                {reserved ?
                                     <Button
                                         className="my-3"
                                         variant="danger">

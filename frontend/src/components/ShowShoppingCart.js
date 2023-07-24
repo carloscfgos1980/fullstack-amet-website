@@ -9,7 +9,6 @@ import { motion } from 'framer-motion';
 const ShowShoppingCart = () => {
     let total = 0;
     const addedPainting = useSelector(state => state.data.addedPainting);
-    console.log("added paintging in show shopping cart", addedPainting)
 
     addedPainting.forEach(item => {
         total += item.price;
@@ -18,9 +17,10 @@ const ShowShoppingCart = () => {
     const dispatch = useDispatch();
 
     const removing = (piece) => {
+        // IdPaint function is to return te value of painting id, in case that the page is refresh and the adding painting do not have paintId value
         const IdPaint = () => {
             if (!piece.paintId) {
-                return 2
+                return piece.id
             } else {
                 return piece.paintId
             }
@@ -30,6 +30,7 @@ const ShowShoppingCart = () => {
             paintId: IdPaint(),
             reserved: false,
             cart: false,
+            title: piece.title,
             registerNum: null,
         }
         dispatch(paintReservedPatchAsync(paintingDetails))
@@ -53,7 +54,6 @@ const ShowShoppingCart = () => {
             <h1 className="display-5 fw-bold" >Shopping Cart</h1>
             {addedPainting.map(painting => {
                 const imagen = painting.img
-                console.log("paintId", painting.paintId)
                 return (
                     <div key={painting.id} className='container my-5'>
                         <div className="row justify-content-center align-items-end">
