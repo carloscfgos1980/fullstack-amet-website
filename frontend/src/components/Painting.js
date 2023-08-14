@@ -38,7 +38,7 @@ const Painting = () => {
 
     return (
         <div className="px-5 py-2" style={{ backgroundColor: '#F5EFF6' }}>
-            {alreadyAdded && <AlertAdded />}
+            {/* {alreadyAdded && <AlertAdded />} This alert I had implemented in the previous version when I need to check if the painting was already added but then i implemented two buttons so it is not longer need it */}
             <Link to='/shop' >
                 <Button onClick={backFalse} className="btn btn-end" variant="warning">back</Button>{' '}
             </Link>
